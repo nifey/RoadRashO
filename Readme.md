@@ -4,3 +4,7 @@ My attempt to build an open source clone of the RoadRash game in Rust using Pist
 ### Learning Resources
 * [Lou's pseudo 3D](http://www.extentofthejam.com/pseudo/)
 * [Build a racing game](http://codeincomplete.com/posts/javascript-racer/)
+
+### Progress so far
+
+![progress](https://github.com/nifey/RoadRashO/blob/master/progress.gif)

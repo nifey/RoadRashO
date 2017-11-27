@@ -2,14 +2,14 @@ extern crate graphics;
 
 use graphics::types::Color;
 
-const ROAD_WIDTH: i32 = 2000;
+const ROAD_WIDTH: f32 = 2000.0;
 const SEGMENT_LENGTH: i32 = 200;
 const RUMBLE_LENGTH: i32 = 3;
 const DARK_COLOR: Color = [0.2, 0.2, 0.2, 1.0];
 const LIGHT_COLOR: Color = [0.8, 0.8, 0.8, 1.0];
 
 const LANES: i32 = 3;
-pub const CAMERA_DEPTH: f32 = 0.8;
+pub const CAMERA_DEPTH: f32 = 3.0;
 
 pub struct Coordinates {
     pub x: f32,
@@ -23,14 +23,14 @@ pub struct Point {
     pub screen: Coordinates,
 }
 impl Point {
-    pub fn project(&mut self, camera: Coordinates, width: i32, height: i32) {
-        self.camera.x = self.world.x - camera.x;
+    pub fn project(&mut self, camera: &Coordinates, width: i32, height: i32) {
+        self.camera.x = self.world.x - (camera.x * ROAD_WIDTH);
         self.camera.y = self.world.y - camera.y;
         self.camera.z = self.world.z - camera.z;
         let scale: f32 = CAMERA_DEPTH / self.camera.z;
         self.screen.x = width as f32 / 2.0 + (scale * self.camera.x * width as f32 / 2.0);
-        self.screen.y = height as f32 / 2.0 + (scale * self.camera.y * height as f32 / 2.0);
-        self.screen.z = scale * ROAD_WIDTH as f32 * width as f32 / 2.0;
+        self.screen.y = height as f32 / 2.0 - (scale * self.camera.y * height as f32 / 2.0);
+        self.screen.z = scale * ROAD_WIDTH * width as f32 / 2.0;
     }
 }
 
@@ -48,7 +48,7 @@ pub struct Road {
 impl Road {
     pub fn new() -> Self {
         let mut segments: Vec<Segment> = Vec::new();
-        for n in 0..100 {
+        for n in 0..500 {
             segments.push(Segment {
                 index: n,
                 color: match (n / RUMBLE_LENGTH) % 2 {
@@ -77,7 +77,7 @@ impl Road {
                     world: Coordinates {
                         x: 0.0,
                         y: 0.0,
-                        z: (n * SEGMENT_LENGTH) as f32,
+                        z: ((n + 1) * SEGMENT_LENGTH) as f32,
                     },
                     camera: Coordinates {
                         x: 0.0,
