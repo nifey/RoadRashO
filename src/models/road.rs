@@ -7,9 +7,7 @@ const SEGMENT_LENGTH: i32 = 200;
 const RUMBLE_LENGTH: i32 = 3;
 const DARK_COLOR: Color = [0.2, 0.2, 0.2, 1.0];
 const LIGHT_COLOR: Color = [0.8, 0.8, 0.8, 1.0];
-
 const LANES: i32 = 3;
-pub const CAMERA_DEPTH: f32 = 3.0;
 
 pub struct Coordinates {
     pub x: f32,
@@ -22,6 +20,7 @@ pub struct Point {
     pub camera: Coordinates,
     pub screen: Coordinates,
 }
+
 impl Point {
     pub fn project(&mut self, camera: &Coordinates, width: i32, height: i32) {
         self.camera.x = self.world.x - (camera.x * ROAD_WIDTH);
@@ -41,12 +40,16 @@ pub struct Segment {
     pub end: Point,
 }
 
+impl Segment {
+    pub fn get_polygon(&self) {}
+}
+
 pub struct Road {
     pub segments: Vec<Segment>,
 }
 
 impl Road {
-    pub fn new() -> Self {
+    pub fn new() -> Road {
         let mut segments: Vec<Segment> = Vec::new();
         for n in 0..500 {
             segments.push(Segment {

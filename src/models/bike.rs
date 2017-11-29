@@ -6,11 +6,11 @@ pub enum Direction {
     Right,
     Straight,
 }
-const ACCELERATION: f32 = 20.0;
-const DECELERATION: f32 = 10.0;
-const BRAKE_DECELERATION: f32 = 15.0;
+const ACCELERATION: f32 = 120.0;
+const DECELERATION: f32 = 50.0;
+const BRAKE_DECELERATION: f32 = 80.0;
 const MAX_SPEED: f32 = 160.0;
-const DX: f32 = 0.05;
+const DX: f32 = 0.5;
 pub struct Bike {
     x_position: f32,
     z_position: f32,
@@ -37,53 +37,58 @@ impl Bike {
     pub fn get_direction(&self) -> Direction {
         self.direction
     }
-    pub fn update(&mut self, actions: &Actions) {
+    pub fn get_speed(&self) -> f32 {
+        self.speed
+    }
+    pub fn update(&mut self, actions: &Actions, dt: f32) {
         self.direction = Direction::Straight;
         if !(actions.move_left && actions.move_right) {
-            if actions.move_left {
-                self.move_left();
+            if actions.move_left && self.speed > 0.0 {
+                self.move_left(dt);
                 self.direction = Direction::Left;
             }
-            if actions.move_right {
-                self.move_right();
+            if actions.move_right && self.speed > 0.0 {
+                self.move_right(dt);
                 self.direction = Direction::Right;
             }
         }
-        self.update_speed(actions.accelerate, actions.brake)
+        self.update_speed(actions.accelerate, actions.brake, dt);
+        self.update_z_position(dt);
+
     }
-    fn move_left(&mut self) {
-        self.x_position -= DX;
+    fn move_left(&mut self, dt: f32) {
+        self.x_position -= DX * dt;
         if self.x_position < -1.0 {
             self.x_position = -1.0;
         }
     }
-    fn move_right(&mut self) {
-        self.x_position += DX;
+    fn move_right(&mut self, dt: f32) {
+        self.x_position += DX * dt;
         if self.x_position > 1.0 {
             self.x_position = 1.0;
         }
     }
-    fn update_speed(&mut self, accelerate: bool, brake: bool) {
+    fn update_speed(&mut self, accelerate: bool, brake: bool, dt: f32) {
         if brake {
-            self.speed -= BRAKE_DECELERATION;
+            self.speed -= BRAKE_DECELERATION * dt;
             if self.speed < 0.0 {
                 self.speed = 0.0;
             }
         } else {
             if accelerate {
-                self.speed += ACCELERATION;
+                self.speed += ACCELERATION * dt;
                 if self.speed > MAX_SPEED {
                     self.speed = MAX_SPEED;
                 }
             } else {
-                self.speed -= DECELERATION;
+                self.speed -= DECELERATION * dt;
                 if self.speed < 0.0 {
                     self.speed = 0.0;
                 }
             }
         }
     }
-    fn update_z_position(&mut self) {
-        self.z_position += self.speed;
+    fn update_z_position(&mut self, dt: f32) {
+        self.z_position += self.speed * dt;
     }
 }

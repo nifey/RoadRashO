@@ -6,6 +6,7 @@ extern crate glutin_window;
 use models::road::{Road, Coordinates, CAMERA_DEPTH};
 
 const DRAW_DISTANCE: i32 = 300;
+const CAMERA_DEPTH: f32 = 3.0;
 
 use piston::window::WindowSettings;
 use piston::event_loop::*;
